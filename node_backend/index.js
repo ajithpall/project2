@@ -16,7 +16,7 @@ const app = express();
 // enable cross-origin resource sharing
 
 const corsOptions = {
-  origin: 'http://http://192.168.1.34:3001/API', // Replace with your Flutter app's URL or localhost IP
+  origin: 'http://http://192.168.1.34:3001/API/adduser', // Replace with your Flutter app's URL or localhost IP
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
@@ -69,6 +69,10 @@ async function setupDatabase() {
     console.error('Error setting up the database:', err); // log any error in setting up the database
   }
 }
+
+
+
+
 
 // POST /adduser to add a new user to the database
 app.post('/adduser', async (req, res) => {

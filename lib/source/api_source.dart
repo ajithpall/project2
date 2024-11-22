@@ -41,7 +41,8 @@ class API {
       final res = await http.post(uri,
           headers: {"Content-Type": "application/json"}, // Set the content-type to application/json
           body: jsonEncode(data)); // This makes the HTTP post request and encodes the data as JSON
-
+print (data); 
+print (jsonEncode(data));
       // Check response status
       // If the status code of the response is 200 (HTTP OK), it parses the response body into a Dart
       // object using jsonDecode() and prints it to the console.

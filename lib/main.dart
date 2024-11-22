@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:restpostapi/source/api_source.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 
-void main() {
+void main() async {
+  //ensuring that everything Flutter-related is ready to go.
+  WidgetsFlutterBinding.ensureInitialized();
+  //line initializes Firebase in your Flutter app.  connect to the backend setting up all the connection to firebase
+  await Firebase.initilizeApp(
+    options: const FirebaseOptions(
+      // Firebase, you'll need to provide the necessary Firebase options.
+      
+    ),
+  );
   runApp(const apiapp());
 }
 
