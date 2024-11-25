@@ -187,7 +187,7 @@ class apiappState extends State<apiapp> {
                       'password': passwordController.text,
                       'email': emailController.text
                     };
-                    API.adduser(userdata);// send the data to the API.adduser( userdata) userdata is map that send to the api is adduser
+                   await  API.adduser(userdata);// send the data to the API.adduser( userdata) userdata is map that send to the api is adduser
                   } , // Call the registration function
                   child: const Text(
                     'Register', // Button text
