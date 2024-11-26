@@ -10,33 +10,44 @@ const bcrypt = require('bcrypt');
 // import dotenv for environment variables
 const dotenv = require('dotenv');
 
+//body-parser
+const bodyParser = require('body-parser');
+
 // import cors for cross-origin resource sharing
 const cors = require('cors');
 
  //Import the generateJWT function
 const { generateJWT } = require('./jwtUtils');
 
+//attach cookie with income request
+const cookieParser = require('cookie-parser');
+
 // load environment variables from a .env file
 dotenv.config();
 
 // run express app
 const app = express();
-// enable cross-origin resource sharing
 
+//path finder
+const path = require('path');
+
+
+
+// use express built-in middleware to parse JSON
+//app.use(bodyParser.json());
+
+// Parse JSON request bodies
+app.use('/apiapp',express.json());
+
+//corsoOptions connection
 const corsOptions = {
-  origin: 'http://http://localhost:3001/API/adduser', // check the url as same in api_source.dart end point
+  origin: 'http://http://localhost:3001', // check the url as same in api_source.dart end point
   methods: ['POST'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
 // to say the app to use this cross options
 app.use(cors(corsOptions));
-
-// use express built-in middleware to parse JSON
-app.use(express.json());
-
-// Hash the password before storing it
-const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
 // connect to database
 let db;
@@ -55,7 +66,7 @@ async function connectToDatabase() {
   }
 }
 
-
+console.log(__dirname);
 
 // setupDatabase function creates a user table if it doesn't exist and inserts demo data
 async function setupDatabase() {
@@ -76,39 +87,30 @@ async function setupDatabase() {
   }
 }
 
-// POST /login endpoint to authenticate user and send a JWT
-app.post('/adduser', async (req, res) => {
+
+
+
+// post response
+app.post('/apiapp/API/adduser', async (req, res) => {
   try {
-    const jsonttt = req.body;
-    const query = `SELECT * FROM userValue WHERE email = ?`;
-    const [user] = await db.execute(query, [email]);
 
-    if (!user || !user.length) {
-      return res.status(404).json({
-        message: 'User not found',
-      });
-    }
+    const {name, password, email} = req.body; // Destructure the properties from req.body
+    console.log('Received data:', { name, password, email });
 
-    const isPasswordCorrect = await bcrypt.compare(password, user[0].user_password);
-    if (!isPasswordCorrect) {
-      return res.status(401).json({
-        message: 'Invalid password',
-      });
-    }
+    // Hash the password before storing it
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Generate JWT for the user
-    const token = generateJWT(user[0]);
+    // post the value to the db
+     const [result] = await db.query(
+        'INSERT INTO userValue (username, user_password, email) VALUES (?, ?, ?)',
+        [name, hashedPassword, email]
+      );
 
-    // Send the JWT in the response
-    res.status(200).json({
-      message: 'Login successful',
-      token: token,
-    });
-  } catch (err) {
-    console.error('Error during login:', err);
-    res.status(500).json({
-      message: 'Server error',
-    });
+    // Example response
+    res.status(200).json({ message: 'User added successfully!' });
+  } catch (error) {
+    console.error('Error adding user:', error);
+    res.status(500).json({ message: 'Failed to add user.' });
   }
 });
 
